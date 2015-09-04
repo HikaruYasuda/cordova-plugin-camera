@@ -26,6 +26,7 @@ function takePicture(success, error, opts) {
         capture(success, error, encoding, destinationType);
     } else {
         var input = document.createElement('input');
+        input.className = 'cordova-plugin-camera';
         input.type = 'file';
         input.name = 'files[]';
 
@@ -97,9 +98,11 @@ function capture(success, errorCallback, encoding, destinationType) {
     var video = document.createElement('video');
     var button = document.createElement('button');
 
+    video.className = 'cordova-plugin-camera';
     video.width = 320;
     video.height = 240;
     button.innerHTML = 'Capture!';
+    button.className = 'cordova-plugin-camera';
 
     button.onclick = function() {
         // create a canvas and capture a frame from video stream
