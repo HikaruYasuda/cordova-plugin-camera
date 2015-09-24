@@ -114,25 +114,33 @@ function capture(success, errorCallback, encoding, destinationType) {
         //imageData = imageData.replace('data:image/png;base64,', '');
 
         // stop video stream, remove video and button
-        localMediaStream.stop();
+        if (typeof localMediaStream.getTracks === 'function') {
+            var tracks = localMediaStream.getTracks();
+            tracks && tracks.length && tracks[0].stop();
+        } else {
+            // deprecated
+            localMediaStream.stop();
+        }
         video.parentNode.removeChild(video);
         button.parentNode.removeChild(button);
 
+        var imageData = canvas.toDataURL(getMime(encoding));
         if (destinationType === Camera.DestinationType.FILE_URI) {
-            function getMime(encoding) {
-                switch (encoding) {
-                    case Camera.EncodingType.JPEG:
-                        return 'image/jpeg';
-                    case Camera.EncodingType.PNG:
-                    default:
-                        return 'image/png';
-                }
-            }
-            getURI(canvas.toDataURL(getMime(encoding)), encoding, function(url) {
+            getURI(imageData, encoding, function(url) {
                 success(url);
             }, errorCallback);
         } else {
             return success(imageData);
+        }
+        
+        function getMime(encoding) {
+            switch (encoding) {
+                case Camera.EncodingType.JPEG:
+                    return 'image/jpeg';
+                case Camera.EncodingType.PNG:
+                default:
+                    return 'image/png';
+            }
         }
     }
 
